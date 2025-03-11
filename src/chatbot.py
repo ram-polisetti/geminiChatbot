@@ -129,28 +129,29 @@ def main():
             try:
                 logger.info(f"Processing user input: {user_input}")
                 if "products" in user_input.lower() and "services" in user_input.lower():
-                    response = """Thank you for your interest in our products and services! At CORtracker360, we offer a comprehensive suite of business solutions designed to revolutionize your workflow. Our main solutions include:
+                    response = """
+Thank you for your interest in our products and services! At CORtracker360, we offer a comprehensive suite of business solutions designed to revolutionize your workflow. Our main solutions include:
 
-                1. ERP (Enterprise Resource Planning): Our unified system integrates all core business processes for seamless collaboration.
+1. ERP (Enterprise Resource Planning): Our unified system integrates all core business processes for seamless collaboration.
 
-                2. CRM (Customer Relationship Management): We help you optimize customer engagement and enhance retention.
+2. CRM (Customer Relationship Management): We help you optimize customer engagement and enhance retention.
 
-                3. SCM (Supply Chain Management): Our tools ensure effective management from procurement to delivery.
+3. SCM (Supply Chain Management): Our tools ensure effective management from procurement to delivery.
 
-                4. HRM (Human Resource Management): We provide solutions to enhance employee engagement and optimize workforce management.
+4. HRM (Human Resource Management): We provide solutions to enhance employee engagement and optimize workforce management.
 
-                5. Additional specialized solutions:
-                   - Purchases/Procurement Management
-                   - Inventory Management
-                   - Production & Maintenance
-                   - Sales Management
+5. Additional specialized solutions:
+    - Purchases/Procurement Management
+    - Inventory Management
+    - Production & Maintenance
+    - Sales Management
 
-                We also offer innovative service models:
-                - Talent as a Service (TaaS): Access to skilled professionals for your project needs
-                - Knowledge as a Service (KaaS): Specialized expertise to bridge skill gaps
-                - RPO & MSP: Flexible hiring management and temporary staffing solutions
+We also offer innovative service models:
+- Talent as a Service (TaaS): Access to skilled professionals for your project needs
+- Knowledge as a Service (KaaS): Specialized expertise to bridge skill gaps
+- RPO & MSP: Flexible hiring management and temporary staffing solutions
 
-                How can we help you find the perfect solution for your business needs?"""
+How can we help you find the perfect solution for your business needs?"""
                 else:
                     response = chatbot.generate_response(user_input)
                 print(f"\nBot: {response}\n")
