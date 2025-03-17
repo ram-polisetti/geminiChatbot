@@ -1,59 +1,128 @@
 # Company Customer Service Chatbot
 
-A versatile chatbot that serves as a customer service agent for company website visitors. The chatbot uses Google's Gemini API along with LangChain and RAG (Retrieval Augmented Generation) to provide accurate responses based on company data. Available as both a terminal-based application and a web interface through a REST API.
+An intelligent chatbot service that acts as a customer service representative for CORtracker360. Built with Express.js and Google's Gemini AI, this chatbot provides accurate responses about company products and services using RAG (Retrieval Augmented Generation) with ChromaDB for efficient information retrieval.
 
 ## Features
 
-- Dual interface support:
-  - Terminal-based interactive chat
-  - Web-based interface with REST API
-- Uses company data from text file as knowledge base
-- Implements RAG pattern with Chroma vector database
-- Provides relevant product/service information
-- Redirects users to appropriate resources with automatic link extraction
-- Intelligent context retrieval and response generation
-- Automatic link extraction and formatting
+- RESTful API built with Express.js
+- Integration with Google Gemini AI (gemini-1.5-pro model)
+- Vector-based document retrieval using ChromaDB
+- Automatic context-aware response generation
+- Intelligent link extraction and categorization
+- CORS-enabled for cross-origin requests
+- Comprehensive error handling and logging
 
-## Tech Stack
+## Prerequisites
 
-- Python 3.9+
-- Google Gemini API (gemini-1.5-pro model)
-- LangChain Community for text processing
-- ChromaDB for vector storage
-- FastAPI for REST API
-- HTML/JavaScript for web interface
-- RAG (Retrieval Augmented Generation)
+- Node.js (v14 or higher)
+- npm (Node Package Manager)
+- Google Cloud Platform account with Gemini API access
+- ChromaDB (will be installed automatically)
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd geminiChatbot
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up environment variables:
+Create a `.env` file in the root directory with the following variables:
+```env
+GEMINI_API_KEY=your_gemini_api_key
+PORT=3000 # Optional, defaults to 3000
+```
 
 ## Project Structure
 
 ```
-├── .env                  # Environment variables (API keys)
-├── companydata.txt       # Company products and services information
-├── requirements.txt      # Project dependencies
 ├── src/
-│   ├── api.py           # REST API implementation
-│   ├── chatbot.py       # Main chatbot implementation
-│   ├── data_loader.py   # Data loading and preprocessing
-│   ├── embeddings.py    # Vector embeddings generation
-│   ├── static/          # Web interface files
-│   │   └── index.html   # Web UI
-│   └── utils.py         # Utility functions
+│   ├── app.js                 # Express server and API routes
+│   ├── embeddings.service.js  # Embeddings generation and ChromaDB integration
+│   ├── logger.js             # Logging configuration
+│   └── static/               # Static web interface files
+│       └── index.html        # Web UI
+├── package.json              # Project dependencies and scripts
+└── .env                      # Environment variables
 ```
 
-## Component Details
+## API Endpoints
 
-### chatbot.py
-- Main chatbot implementation using the CompanyChatbot class
-- Core Components:
-  - `__init__()`: Initializes Gemini API, ChromaDB, and other components
-  - `setup_knowledge_base()`: Loads and processes company data into vector store
-  - `get_relevant_context(query: str, k: int = 3)`: Retrieves top-k similar contexts
-  - `generate_response(question: str)`: Implements RAG pattern for response generation
-  - Exception handling and logging throughout
+### POST /api/chat
+Send a message to the chatbot.
 
-### api.py
-- FastAPI-based REST API implementation
-- Endpoints:
+**Request Body:**
+```json
+{
+    "message": "Tell me about your ERP solutions"
+}
+```
+
+**Response:**
+```json
+{
+    "response": "Detailed response about ERP solutions with relevant links"
+}
+```
+
+### GET /api/health
+Check the API health status.
+
+**Response:**
+```json
+{
+    "status": "healthy"
+}
+```
+
+## Running the Application
+
+1. Start the development server:
+```bash
+npm run dev
+```
+
+2. Access the web interface:
+Open `http://localhost:3000` in your browser
+
+## Error Handling
+
+The application includes comprehensive error handling:
+- Input validation
+- API rate limiting
+- Graceful error responses
+- Detailed error logging
+
+## Logging
+
+Logs are stored in the `logs` directory:
+- `combined.log`: All log levels
+- `error.log`: Error-level logs only
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| GEMINI_API_KEY | Google Gemini API key | Yes |
+| PORT | Server port (default: 3000) | No |
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
   - `POST /chat`: Accepts chat messages and returns bot responses
   - `GET /`: Serves the web interface
 - CORS support for web client integration
@@ -95,35 +164,34 @@ A versatile chatbot that serves as a customer service agent for company website 
 - [x] Web interface development
 - [ ] Testing and refinement
 
-## Setup Instructions
-
-1. Clone the repository
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-3. Install dependencies: `pip install -r requirements.txt`
-4. Set up environment variables in `.env`:
-   ```
-   GEMINI_API_KEY=your_api_key_here
-   ```
-5. Add your company data to `companydata.txt`
-6. Choose how to run the chatbot:
-   - Terminal interface: `python src/chatbot.py`
-   - Web interface: `python src/api.py` then visit http://localhost:8000
-
 ## Usage
 
-### Terminal Interface
-The chatbot implements a sophisticated RAG pattern:
-1. User inputs a question
-2. System retrieves relevant context from the knowledge base
-3. Context is combined with the question to generate an accurate response
-4. Any relevant links are automatically extracted and included
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd geminiChatbot
+```
 
-### Web Interface
-1. Access the web interface at http://localhost:8000
-2. Type your question in the chat input
-3. Receive responses in a conversational format
-4. Links are automatically formatted as clickable elements
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up environment variables in `.env`:
+```env
+GEMINI_API_KEY=your_gemini_api_key
+PORT=3000 # Optional, defaults to 3000
+```
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+5. Access the web interface at http://localhost:3000
+
+The chatbot implements a sophisticated RAG pattern:
+1. User inputs a question through the web interface
+2. System retrieves relevant context from the ChromaDB knowledge base
+3. Context is combined with the question to generate an accurate response using Gemini AI
+4. Any relevant links are automatically extracted and included in the response

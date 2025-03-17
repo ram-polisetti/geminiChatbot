@@ -97,7 +97,7 @@
         const statusDiv = document.getElementById('status');
 
         // Check API health status
-        fetch('http://127.0.0.1:8000/api/health')
+        fetch('http://127.0.0.1:3000/api/health')
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'healthy') {
@@ -128,7 +128,7 @@
             addMessage(message, true);
             messageInput.value = '';
 
-            fetch('http://127.0.0.1:8000/api/chat', {
+            fetch('http://127.0.0.1:3000/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

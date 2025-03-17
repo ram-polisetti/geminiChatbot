@@ -9,31 +9,43 @@ logging.basicConfig(
 )
 
 class DataLoader:
-    def __init__(self, data_path: str = "../companydata.txt"):
+    def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.data_path = Path(__file__).parent.parent / "companydata.txt"
+        self.data_paths = [
+            Path(__file__).parent.parent / "companydata.txt",
+            Path(__file__).parent.parent / "companytestdata.txt"
+        ]
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
             chunk_overlap=200,
             length_function=len
         )
-        self.logger.info(f"DataLoader initialized with data path: {self.data_path}")
+        self.logger.info(f"DataLoader initialized with data paths: {self.data_paths}")
     
     def load_data(self) -> str:
-        """Load the company data from the text file."""
-        self.logger.info(f"Attempting to load data from {self.data_path}")
-        if not self.data_path.exists():
-            self.logger.error(f"Company data file not found at {self.data_path}")
-            raise FileNotFoundError(f"Company data file not found at {self.data_path}")
+        """Load the company data from all text files."""
+        combined_data = []
+        for path in self.data_paths:
+            self.logger.info(f"Attempting to load data from {path}")
+            if not path.exists():
+                self.logger.warning(f"Data file not found at {path}, skipping...")
+                continue
+            
+            try:
+                with open(path, 'r', encoding='utf-8') as file:
+                    data = file.read()
+                    combined_data.append(data)
+                    self.logger.info(f"Successfully loaded {len(data)} characters from {path}")
+            except Exception as e:
+                self.logger.error(f"Error loading data from {path}: {str(e)}")
+                continue
         
-        try:
-            with open(self.data_path, 'r', encoding='utf-8') as file:
-                data = file.read()
-                self.logger.info(f"Successfully loaded {len(data)} characters of data")
-                return data
-        except Exception as e:
-            self.logger.error(f"Error loading data: {str(e)}")
-            raise
+        if not combined_data:
+            raise FileNotFoundError("No valid data files found")
+        
+        return "\n\n".join(combined_data)
+        
+        
     
     def preprocess_data(self, text: str) -> List[str]:
         """Split the text into chunks for embedding."""

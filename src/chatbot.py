@@ -65,16 +65,29 @@ class CompanyChatbot:
             self.logger.error(f"Error setting up knowledge base: {str(e)}")
             raise
     
-    def get_relevant_context(self, query: str, k: int = 3) -> List[str]:
+    def get_relevant_context(self, query: str, k: int = 5) -> List[str]:
         """Retrieve relevant context from the vector store."""
         self.logger.info(f"Retrieving context for query: {query}")
         try:
+            # Increase context retrieval for better coverage
             results = self.collection.query(
                 query_texts=[query],
                 n_results=k
             )
+            
+            # Log retrieved documents for debugging
             self.logger.info(f"Successfully retrieved {len(results['documents'][0])} relevant documents")
-            return results['documents'][0]
+            self.logger.debug(f"Retrieved documents: {results['documents'][0]}")
+            
+            # Filter and sort context by relevance
+            relevant_docs = results['documents'][0]
+            
+            # Ensure we have meaningful context
+            if not relevant_docs:
+                self.logger.warning("No relevant context found in vector store")
+                return ["I apologize, but I don't have enough information to answer your question accurately. Could you please provide more details or rephrase your question?"]
+                
+            return relevant_docs
         except Exception as e:
             self.logger.error(f"Error retrieving context: {str(e)}")
             raise
