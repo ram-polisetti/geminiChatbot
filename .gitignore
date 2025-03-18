@@ -13,9 +13,39 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# ChromaDB files
-chromadb/
+# Database and storage
+chroma_data/
 *.sqlite3
+*.sqlite
+*.db
+*.bin
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Dependency directories
+node_modules/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS metadata
+.DS_Store
 
 # Editor directories and files
 .idea/
