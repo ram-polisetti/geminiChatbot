@@ -4,7 +4,13 @@ const dotenv = require('dotenv');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const vectorStore = require('./services/vectorStore');
 
-dotenv.config();
+require('dotenv').config();
+
+if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'AI-KEY-GOES-HERE') {
+    console.error('Invalid or missing GEMINI_API_KEY in .env file');
+    process.exit(1);
+}
+
 const app = express();
 
 app.use(cors());

@@ -6,19 +6,31 @@ class DataLoader {
         const dataPath = path.join(__dirname, '../../companydata.txt');
         const data = await fs.readFile(dataPath, 'utf8');
         
+        // Split by sections (##) while preserving headers for context
+        const sections = data.split(/(?=##\s)/); 
         const chunks = [];
-        const words = data.split(' ');
-        let currentChunk = '';
         
-        for (const word of words) {
-            if (currentChunk.length + word.length > 1000) {
-                chunks.push(currentChunk);
-                currentChunk = word;
-            } else {
-                currentChunk += ' ' + word;
+        for (const section of sections) {
+            if (section.trim()) {
+                // If section is too long, split it further by paragraphs
+                if (section.length > 500) {
+                    const paragraphs = section.split('\n\n');
+                    let currentChunk = '';
+                    
+                    for (const paragraph of paragraphs) {
+                        if (currentChunk.length + paragraph.length > 500) {
+                            if (currentChunk) chunks.push(currentChunk.trim());
+                            currentChunk = paragraph;
+                        } else {
+                            currentChunk += '\n\n' + paragraph;
+                        }
+                    }
+                    if (currentChunk) chunks.push(currentChunk.trim());
+                } else {
+                    chunks.push(section.trim());
+                }
             }
         }
-        if (currentChunk) chunks.push(currentChunk);
         
         return chunks;
     }
