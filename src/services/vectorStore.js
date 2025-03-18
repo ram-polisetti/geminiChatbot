@@ -1,9 +1,11 @@
 const { ChromaClient } = require('chromadb');
-const dataLoader = require('./dataLoader');
+const dataLoader = require('./dataLoader');  // Add this import
 
 class VectorStore {
     constructor() {
-        this.client = new ChromaClient();
+        this.client = new ChromaClient({
+            path: "http://localhost:8000"
+        });
         this.collection = null;
     }
 
