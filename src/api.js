@@ -1,8 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const vectorStore = require('./services/vectorStore');
+const vectorStore = require('./services/langchainVectorStore');
 
 require('dotenv').config();
 
@@ -16,8 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+
 
 (async () => {
     try {
@@ -31,17 +29,13 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message } = req.body;
-        const results = await vectorStore.queryContext(message);
-        
-        const prompt = `Context: ${results.documents[0].join('\n\n')}
-        Question: ${message}`;
-        
-        const result = await model.generateContent(prompt);
+        const { message, chatHistory = [] } = req.body;
+        const result = await vectorStore.query(message, chatHistory);
         
         res.json({
-            message: result.response.text(),
-            links: extractLinks(results.documents[0].join('\n'))
+            message: result.answer,
+            sources: result.sources,
+            links: extractLinks(result.sources.join('\n'))
         });
     } catch (error) {
         console.error('Error:', error);
