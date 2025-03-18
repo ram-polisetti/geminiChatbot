@@ -1,38 +1,52 @@
 const fs = require('fs').promises;
 const path = require('path');
+const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
 
 class DataLoader {
-    async loadCompanyData() {
-        const dataPath = path.join(__dirname, '../../companydata.txt');
-        const data = await fs.readFile(dataPath, 'utf8');
-        
-        // Split by sections (##) while preserving headers for context
-        const sections = data.split(/(?=##\s)/); 
-        const chunks = [];
-        
-        for (const section of sections) {
-            if (section.trim()) {
-                // If section is too long, split it further by paragraphs
-                if (section.length > 500) {
-                    const paragraphs = section.split('\n\n');
-                    let currentChunk = '';
-                    
-                    for (const paragraph of paragraphs) {
-                        if (currentChunk.length + paragraph.length > 500) {
-                            if (currentChunk) chunks.push(currentChunk.trim());
-                            currentChunk = paragraph;
-                        } else {
-                            currentChunk += '\n\n' + paragraph;
-                        }
-                    }
-                    if (currentChunk) chunks.push(currentChunk.trim());
-                } else {
-                    chunks.push(section.trim());
-                }
-            }
+    constructor() {
+        this.dataPath = path.join(__dirname, '../../companydata.txt');
+        this.textSplitter = new RecursiveCharacterTextSplitter({
+            chunkSize: 1000,
+            chunkOverlap: 200,
+        });
+        console.info(`DataLoader initialized with data path: ${this.dataPath}`);
+    }
+
+    async loadData() {
+        console.info(`Attempting to load data from ${this.dataPath}`);
+        try {
+            const data = await fs.readFile(this.dataPath, 'utf8');
+            console.info(`Successfully loaded ${data.length} characters of data`);
+            return data;
+        } catch (error) {
+            console.error(`Error loading data: ${error.message}`);
+            throw error;
         }
-        
-        return chunks;
+    }
+
+    async preprocessData(text) {
+        console.info(`Preprocessing data of length ${text.length} characters`);
+        try {
+            const chunks = await this.textSplitter.createDocuments([text]);
+            console.info(`Successfully split text into ${chunks.length} chunks`);
+            return chunks;
+        } catch (error) {
+            console.error(`Error preprocessing data: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async loadCompanyData() {
+        console.info('Starting data processing pipeline');
+        try {
+            const rawText = await this.loadData();
+            const processedChunks = await this.preprocessData(rawText);
+            console.info('Data processing pipeline completed successfully');
+            return processedChunks;
+        } catch (error) {
+            console.error(`Error in processing pipeline: ${error.message}`);
+            throw error;
+        }
     }
 }
 
