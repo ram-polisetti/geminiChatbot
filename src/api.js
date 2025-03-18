@@ -29,17 +29,30 @@ app.use(express.json());
 
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, chatHistory = [] } = req.body;
-        const result = await vectorStore.query(message, chatHistory);
+        console.log('Received chat request:', req.body);
+        const { message } = req.body;
         
-        res.json({
+        if (!message) {
+            return res.status(400).json({ error: 'Message is required' });
+        }
+
+        console.log('Processing message:', message);
+        const result = await vectorStore.query(message);
+        console.log('Query completed successfully');
+        
+        const response = {
             message: result.answer,
             sources: result.sources,
             links: extractLinks(result.sources.join('\n'))
-        });
+        };
+        console.log('Sending response');
+        res.json(response);
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('API Error:', error);
+        const errorMessage = error.message.includes('timed out')
+            ? 'Request timed out. Please try again.'
+            : 'An error occurred while processing your request';
+        res.status(500).json({ error: errorMessage });
     }
 });
 
