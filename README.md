@@ -1,3 +1,60 @@
+# CORtracker360 Chatbot
+
+A company customer service chatbot built with Express.js, LangChain, and Gemini AI.
+
+## Installation
+
+1. Clone the repository
+2. Install dependencies:
+```bash
+# Option 1: Standard installation (if it works)
+npm install
+
+# Option 2: If you encounter peer dependency issues
+npm install --legacy-peer-deps
+```
+
+3. Create a `.env` file with your Gemini API key:
+```
+GEMINI_API_KEY=your-api-key-here
+PORT=3000
+```
+
+## Running the Application
+
+1. Start the ChromaDB server:
+```bash
+chroma run --path ./chromadb
+```
+
+2. In a new terminal, start the application:
+```bash
+npm run dev
+```
+
+## Known Issues
+
+### Peer Dependency Conflicts
+
+There are currently peer dependency conflicts between some of the LangChain packages. This is a known issue that will be resolved when these packages are updated. For now, you can use `npm install --legacy-peer-deps` to install the dependencies.
+
+The specific conflict is between:
+- @langchain/community@0.3.36 requiring @mendable/firecrawl-js@^1.4.3
+- langchain@0.1.37 requiring @mendable/firecrawl-js@^0.0.13
+
+This will be resolved in future updates of these packages.
+
+## Dependencies
+
+- @langchain/community: ^0.3.36
+- @langchain/core: ^0.3.42
+- @langchain/google-genai: ^0.0.10
+- chromadb: ^1.10.5
+- cors: ^2.8.5
+- dotenv: ^16.4.7
+- express: ^4.21.2
+- langchain: ^0.1.25
+- nodemon: ^3.0.2 (dev dependency)
 # CORtracker360 Customer Service Chatbot
 
 An intelligent chatbot implementation using Express.js, ChromaDB, and Google's Gemini API. The chatbot provides accurate responses about CORtracker360's products and services using RAG (Retrieval Augmented Generation) pattern.
