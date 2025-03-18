@@ -51,6 +51,108 @@ PORT=3000
 - Format the data in clear, concise paragraphs
 - Include relevant URLs and product information
 
+## Functionality Details
+
+**Core Service Implementations**
+
+`src/services/vectorStore.js`
+```javascript
+class VectorStore {
+  /**
+   * Initializes ChromaDB connection and Gemini embedding function
+   * @param {object} config - Configuration object
+   * @param {string} config.collectionName - Name for vector collection
+   * @param {number} config.batchSize - Documents per embedding batch (default: 5)
+   */
+  constructor(config) {
+    // ChromaDB client setup
+    this.client = new ChromaClient();
+    // Gemini embedding generator
+    this.embeddingFunction = new GeminiEmbeddingFunction({
+      apiKey: process.env.GEMINI_API_KEY
+    });
+  }
+
+  /**
+   * Creates/loads vector collection with error handling
+   * Processes documents in batches with rate limiting
+   * @param {Array} documents - Company data chunks from dataLoader
+   * @param {number} [retries=3] - Max retry attempts for failed batches
+   */
+  async initialize(documents, retries = 3) {
+    // Implementation details...
+  }
+
+  /**
+   * Handles context query with error tracking
+   * @param {string} query - User's search query
+   * @param {number} [topK=3] - Number of similar contexts to retrieve
+   * @returns {Array} Relevant context chunks with metadata
+   */
+  async queryContext(query, topK = 3) {
+    // Implementation details...
+  }
+}
+```
+
+`src/services/langchainVectorStore.js`
+- `constructor()`: Configures LangChain components with optimized parameters
+- `initialize()`: Implements document splitting, batch processing, and retrieval chain setup
+- `query()`: Executes hybrid search with timeout handling and source tracking
+
+`src/services/dataLoader.js`
+```javascript
+class DataLoader {
+  /**
+   * Parses company data into structured chunks
+   * @param {string} filePath - Path to companydata.txt
+   * @param {number} [chunkSize=1000] - Character count per chunk
+   * @param {number} [overlap=200] - Overlap between chunks
+   * @returns {Array} Structured document chunks with metadata
+   */
+  async loadCompanyData(filePath, chunkSize = 1000, overlap = 200) {
+    // File processing implementation...
+  }
+
+  /**
+   * Validates chunks before ingestion
+   * @private
+   * @param {Array} chunks - Document chunks to validate
+   * @throws {Error} If invalid chunk structure detected
+   */
+  validateChunks(chunks) {
+    // Validation logic...
+  }
+}
+```
+
+`src/api.js`
+```javascript
+// API endpoint configuration
+const api = express.Router();
+
+/**
+ * Chat endpoint - Orchestrates request flow
+ * @route POST /api/chat
+ * @param {object} req.body - Request body
+ * @param {string} req.body.message - User's query message
+ * @returns {object} AI response with links and formatted message
+ */
+api.post('/chat', rateLimiter, async (req, res) => {
+  // Endpoint implementation...
+});
+
+/**
+ * Structures final API response
+ * @param {string} rawResponse - Raw AI response text
+ * @param {Array} sources - Context sources from vector store
+ * @returns {object} Formatted response with links
+ */
+function formatResponse(rawResponse, sources) {
+  // Response formatting logic...
+}
+```
+
 ## Project Structure
 ```plaintext
 geminiChatbot/
