@@ -21,10 +21,10 @@ class LangChainVectorStore {
         this.model = new ChatGoogleGenerativeAI({
             modelName: "gemini-1.5-pro",
             apiKey: process.env.GEMINI_API_KEY,
-            temperature: 0,
-            maxOutputTokens: 50,
-            topK: 1,
-            topP: 0,
+            temperature: 0.7,
+            maxOutputTokens: 100,
+            topK: 2,
+            topP: 0.8,
             streaming: false
         });
         
@@ -113,19 +113,28 @@ class LangChainVectorStore {
             console.log('Starting query processing for:', question);
             
             console.log('Retrieving relevant documents...');
-            const docs = await this.vectorStore.similaritySearch(question, 1);
+            const docs = await this.vectorStore.similaritySearch(question, 3);
             console.log('Retrieved documents:', docs.length);
 
             const model = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
                 .getGenerativeModel({ model: "gemini-1.5-pro" });
 
-            const prompt = `Summarize in 10 words: ${docs[0].pageContent}`;
+            const prompt = `Based on the following information, provide a concise response to: "${question}"
+            
+            Information: ${docs.map(doc => doc.pageContent).join('\n\n')}
+            
+            Instructions:
+            - Be friendly but brief (2-3 sentences)
+            - Focus on the most relevant features
+            - Use natural, conversational language
+            - Keep it simple and direct`;
+            
             console.log('Sending prompt to LLM...');
 
             const response = await Promise.race([
                 model.generateContent(prompt),
                 new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Query timed out after 10 seconds')), 10000)
+                    setTimeout(() => reject(new Error('Query timed out after 15 seconds')), 15000)
                 )
             ]);
 
